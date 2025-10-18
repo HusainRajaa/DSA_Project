@@ -1,1 +1,30 @@
 Our DSA project to be completed before 30 October
+
+
+// --- UTILITY HOOK for scroll animations ---
+const useOnScreen = (options: IntersectionObserverInit): [RefObject<HTMLDivElement | null>, boolean] => {
+    const ref = useRef<HTMLDivElement | null>(null);
+    const [isVisible, setIsVisible] = useState(false);
+    
+    useEffect(() => {
+        const observer = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting) {
+                setIsVisible(true);
+                observer.unobserve(entry.target);
+            }
+        }, options);
+        
+        const currentRef = ref.current;
+        if (currentRef) {
+            observer.observe(currentRef);
+        }
+
+        return () => { 
+            if (currentRef) {
+                observer.unobserve(currentRef);
+            } 
+        };
+    }, [options]);
+
+    return [ref, isVisible];
+};
