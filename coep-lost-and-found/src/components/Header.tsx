@@ -8,7 +8,7 @@ const Header = () => {
           COEP Lost & Found
         </Link>
         <nav>
-          <ul className="flex items-center space-x-8">
+          <ul className="flex items-center space-x-10">
             <li>
               <Link href="/report-lost" className="text-[var(--secondary-text)] hover:text-[var(--primary-text)] transition-colors">
                 Report Lost
