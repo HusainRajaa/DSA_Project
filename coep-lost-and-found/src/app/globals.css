@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #121212;
+  --card-background: #1e1e1e;
+  --primary-text: #e0e0e0;
+  --secondary-text: #a0a0a0;
+  --accent-color: #00aaff;
+  --border-color: #333333;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--primary-text);
+  font-family: 'Inter', sans-serif;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--primary-text);
+  font-weight: 700;
+}
+
+input, textarea {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  color: var(--primary-text);
+  transition: border-color 0.3s;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+button {
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
