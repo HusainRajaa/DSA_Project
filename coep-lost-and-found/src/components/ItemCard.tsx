@@ -1,0 +1,76 @@
+'use client';
+
+import React, { useRef } from 'react';
+import styles from './ItemCard.module.css'; // We'll create this CSS file too
+
+// --- SVG Icon ---
+const ArrowRightIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.arrowIcon}>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+        <polyline points="12 5 19 12 12 19"></polyline>
+    </svg>
+);
+
+
+// --- Type Definition ---
+interface Item {
+  id: number;
+  title: string;
+  location: string;
+  category: string;
+  imageUrl: string;
+  date: string;
+}
+
+// --- Component Props ---
+interface ItemCardProps {
+  item: Item;
+  index: number; // For the animation delay
+  isVisible: boolean; // To trigger the animation
+}
+
+// --- ItemCard Component ---
+const ItemCard: React.FC<ItemCardProps> = ({ item, index, isVisible }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const { left, top, width, height } = cardRef.current.getBoundingClientRect();
+    const x = (e.clientX - left) / width - 0.5;
+    const y = (e.clientY - top) / height - 0.5;
+    cardRef.current.style.transform = `perspective(1000px) rotateX(${y * -10}deg) rotateY(${x * 10}deg) scale3d(1.05, 1.05, 1.05)`;
+  };
+
+  const handleMouseLeave = () => {
+    if (!cardRef.current) return;
+    cardRef.current.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+  };
+
+  return (
+    <div
+      ref={cardRef}
+      className={`${styles.itemCard} ${isVisible ? styles.itemCardVisible : ''}`}
+      style={{ transitionDelay: `${index * 100}ms` }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      <div className={styles.cardInner}>
+        <img src={item.imageUrl} alt={item.title} onError={(e) => ((e.target as HTMLImageElement).src = 'https://placehold.co/600x400/31343c/FFFFFF?text=Image+Not+Found')} />
+        <div className={styles.itemCardContent}>
+          <div className={styles.itemCardHeader}>
+            <h3 className={styles.itemCardTitle}>{item.title}</h3>
+            <span className={styles.itemCardCategory}>{item.category}</span>
+          </div>
+          <p className={styles.itemCardInfo}><strong>Last Seen:</strong> {item.location}</p>
+          <p className={styles.itemCardInfo} style={{ fontSize: '0.875rem' }}><strong>Date Found:</strong> {item.date}</p>
+          <button className={styles.itemCardButton}>
+            <span>View Details</span>
+            <ArrowRightIcon />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ItemCard;
