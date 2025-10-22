@@ -14,12 +14,19 @@ const ArrowRightIcon = () => (
 
 // --- Type Definition ---
 interface Item {
-  id: number;
+  id: string;
   title: string;
+  description: string;
   location: string;
   category: string;
-  imageUrl: string;
-  date: string;
+  imageUrl: string | null;
+  type: 'LOST' | 'FOUND';
+  status: 'UNCLAIMED' | 'CLAIMED';
+  createdAt: string;
+  author: {
+    name: string | null;
+    email: string | null;
+  };
 }
 
 // --- Component Props ---
@@ -27,10 +34,11 @@ interface ItemCardProps {
   item: Item;
   index: number; // For the animation delay
   isVisible: boolean; // To trigger the animation
+  onContactOwner?: (itemId: string) => void;
 }
 
 // --- ItemCard Component ---
-const ItemCard: React.FC<ItemCardProps> = ({ item, index, isVisible }) => {
+const ItemCard: React.FC<ItemCardProps> = ({ item, index, isVisible, onContactOwner }) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -46,6 +54,24 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, index, isVisible }) => {
     cardRef.current.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
   };
 
+  const handleContactOwner = () => {
+    if (onContactOwner) {
+      onContactOwner(item.id);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  const getImageUrl = () => {
+    return item.imageUrl || 'https://placehold.co/600x400/31343c/FFFFFF?text=No+Image';
+  };
+
   return (
     <div
       ref={cardRef}
@@ -55,18 +81,27 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, index, isVisible }) => {
       onMouseLeave={handleMouseLeave}
     >
       <div className={styles.cardInner}>
-        <img src={item.imageUrl} alt={item.title} onError={(e) => ((e.target as HTMLImageElement).src = 'https://placehold.co/600x400/31343c/FFFFFF?text=Image+Not+Found')} />
+        <img src={getImageUrl()} alt={item.title} onError={(e) => ((e.target as HTMLImageElement).src = 'https://placehold.co/600x400/31343c/FFFFFF?text=Image+Not+Found')} />
         <div className={styles.itemCardContent}>
           <div className={styles.itemCardHeader}>
             <h3 className={styles.itemCardTitle}>{item.title}</h3>
-            <span className={styles.itemCardCategory}>{item.category}</span>
+            <div className={styles.itemCardMeta}>
+              <span className={`${styles.itemCardType} ${item.type === 'LOST' ? styles.lost : styles.found}`}>
+                {item.type}
+              </span>
+              <span className={styles.itemCardCategory}>{item.category}</span>
+            </div>
           </div>
-          <p className={styles.itemCardInfo}><strong>Last Seen:</strong> {item.location}</p>
-          <p className={styles.itemCardInfo} style={{ fontSize: '0.875rem' }}><strong>Date Found:</strong> {item.date}</p>
-          <button className={styles.itemCardButton}>
-            <span>View Details</span>
-            <ArrowRightIcon />
-          </button>
+          <p className={styles.itemCardDescription}>{item.description}</p>
+          <p className={styles.itemCardInfo}><strong>Location:</strong> {item.location}</p>
+          <p className={styles.itemCardInfo} style={{ fontSize: '0.875rem' }}><strong>Reported:</strong> {formatDate(item.createdAt)}</p>
+          <p className={styles.itemCardInfo} style={{ fontSize: '0.875rem' }}><strong>Status:</strong> {item.status}</p>
+          <div className={styles.itemCardActions}>
+            <button className={styles.itemCardButton} onClick={handleContactOwner}>
+              <span>Contact Owner</span>
+              <ArrowRightIcon />
+            </button>
+          </div>
         </div>
       </div>
     </div>

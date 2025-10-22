@@ -28,6 +28,8 @@ const ArrowRightIcon = () => (
 // --- ITEM FORM COMPONENT ---
 export default function ItemForm({ formType }: ItemFormProps) {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitMessage, setSubmitMessage] = useState<string | null>(null);
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -39,9 +41,65 @@ export default function ItemForm({ formType }: ItemFormProps) {
             reader.readAsDataURL(file);
         }
     };
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setIsSubmitting(true);
+        setSubmitMessage(null);
+
+        const form = event.currentTarget;
+        const formData = new FormData(form);
+        
+        try {
+            const formDataObj = {
+                title: formData.get('title'),
+                description: formData.get('description'),
+                category: formData.get('category'),
+                location: formData.get('location'),
+                contact: formData.get('contact'),
+                imageUrl: imagePreview // In a real app, you'd upload this to a storage service
+            };
+
+            console.log('Submitting form data:', formDataObj);
+
+            // Use different API endpoints for lost and found items
+            const apiUrl = formType === 'Lost' ? '/api/lost-items' : '/api/found-items';
+            
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formDataObj),
+            });
+
+            console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log('Success response:', result);
+                setSubmitMessage(`${formType} item reported successfully!`);
+                // Reset form safely
+                if (form) {
+                    form.reset();
+                }
+                setImagePreview(null);
+            } else {
+                const errorData = await response.json();
+                console.log('Error response:', errorData);
+                setSubmitMessage(`Error: ${errorData.error || 'Failed to submit item'}`);
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            setSubmitMessage('Error: Failed to submit item. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
     
     return (
-        <form className={styles.form}>
+        <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.formGroup}>
                 <label htmlFor="title">Item Title</label>
                 <input type="text" id="title" name="title" placeholder="e.g., Black Nike Water Bottle" required />
@@ -71,6 +129,11 @@ export default function ItemForm({ formType }: ItemFormProps) {
             </div>
 
             <div className={styles.formGroup}>
+                <label htmlFor="contact">Contact Number</label>
+                <input type="tel" id="contact" name="contact" placeholder="e.g., +91 9876543210" required />
+            </div>
+
+            <div className={styles.formGroup}>
                 <label htmlFor="image-upload">Upload an Image (Optional)</label>
                 <div 
                     className={styles.dropZone}
@@ -89,9 +152,21 @@ export default function ItemForm({ formType }: ItemFormProps) {
                 </div>
             </div>
             
-            <button type="submit" className={styles.submitButton}>
-                <span>Submit {formType} Item Report</span>
-                <ArrowRightIcon />
+            {submitMessage && (
+                <div className={`${styles.submitMessage} ${submitMessage.includes('Error') ? styles.error : styles.success}`}>
+                    {submitMessage}
+                </div>
+            )}
+            
+            <button 
+                type="submit" 
+                className={styles.submitButton}
+                disabled={isSubmitting}
+            >
+                <span>
+                    {isSubmitting ? 'Submitting...' : `Submit ${formType} Item Report`}
+                </span>
+                {!isSubmitting && <ArrowRightIcon />}
             </button>
         </form>
     );
