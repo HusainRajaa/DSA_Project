@@ -1,10 +1,32 @@
 import { NextResponse } from 'next/server';
-
-// Simple in-memory storage for lost items
-let lostItems: any[] = [];
+import clientPromise from '@/lib/mongodb';
 
 export async function GET() {
-  return NextResponse.json(lostItems);
+  try {
+    const client = await clientPromise;
+    const db = client.db();
+    const lostItems = await db.collection('lostItems').find({}).sort({ createdAt: -1 }).toArray();
+    
+    // Convert MongoDB _id to id for frontend compatibility
+    const formattedItems = lostItems.map(item => ({
+      id: item._id.toString(),
+      title: item.title,
+      description: item.description,
+      category: item.category,
+      location: item.location,
+      contact: item.contact,
+      imageUrl: item.imageUrl,
+      createdAt: item.createdAt
+    }));
+    
+    return NextResponse.json(formattedItems);
+  } catch (error) {
+    console.error('Error fetching lost items:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch lost items' },
+      { status: 500 }
+    );
+  }
 }
 
 export async function POST(request: Request) {
@@ -21,20 +43,28 @@ export async function POST(request: Request) {
       );
     }
 
+    const client = await clientPromise;
+    const db = client.db();
+    
     const newLostItem = {
-      id: Date.now().toString(),
       title,
       description,
       category,
       location,
       contact,
       imageUrl: imageUrl || null,
-      createdAt: new Date().toISOString()
+      createdAt: new Date()
     };
 
-    lostItems.push(newLostItem);
+    const result = await db.collection('lostItems').insertOne(newLostItem);
+    
+    const createdItem = {
+      id: result.insertedId.toString(),
+      ...newLostItem,
+      createdAt: newLostItem.createdAt.toISOString()
+    };
 
-    return NextResponse.json(newLostItem, { status: 201 });
+    return NextResponse.json(createdItem, { status: 201 });
   } catch (error) {
     console.error('Error creating lost item:', error);
     return NextResponse.json(
