@@ -201,10 +201,10 @@ export default function HomePage() {
                     <p className={styles.sectionSubtitle}>This isn't just a website; it's a smart system designed for efficiency and speed.</p>
                 </AnimatedSection>
                 <div className={styles.dsaGrid}>
-                    <DsaCard icon="🚀" title="Trie" description="For lightning-fast, predictive search suggestions as you type." delay={0} />
-                    <DsaCard icon="🗂️" title="HashMap" description="Instantly categorizes and filters items for quick browsing." delay={100} />
-                    <DsaCard icon="⏳" title="Queue" description="Fairly processes new reports in chronological order for admin review." delay={200} />
-                    <DsaCard icon="🏆" title="Max-Heap" description="Intelligently scores and suggests the most likely matches for your lost items." delay={300} />
+                    <DsaCard icon={"🚀"} title="Trie" description="For lightning-fast, predictive search suggestions as you type." delay={0} />
+                    <DsaCard icon={"🗂️"} title="HashMap" description="Instantly categorizes and filters items for quick browsing." delay={100} />
+                    <DsaCard icon={"⏳"} title="Queue" description="Fairly processes new reports in chronological order for admin review." delay={200} />
+                    <DsaCard icon={"🏆"} title="Max-Heap" description="Intelligently scores and suggests the most likely matches for your lost items." delay={300} />
                 </div>
             </div>
         </section>
@@ -213,4 +213,3 @@ export default function HomePage() {
     </div>
   );
 }
-
