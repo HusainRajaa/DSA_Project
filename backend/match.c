@@ -4,7 +4,7 @@
 #include "match.h"
 // Goal - max heap - highest score on top 
 // Ranks lost found matches 
-// Initialize empty heap
+// Initialized empty heap 
 void initHeap(MaxHeap* h) {
     h->size = 0;
 }

@@ -3,7 +3,7 @@
 #include <string.h>
 #include "queue.h"
 
-// Initialize empty queue
+// Initialized empty queue
 void initQueue(Queue* q) {
     q->front = q->rear = NULL;
 }

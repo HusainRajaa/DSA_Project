@@ -1,4 +1,4 @@
-//used to handle report in order 
+//used to handle report in order (priority) 
 
 #ifndef QUEUE_H
 #define QUEUE_H

@@ -3,6 +3,6 @@ BlueUmbrella,Accessories,GateA,Found,3
 Laptop,Electronics,Lab1,Lost,5
 iPhone,Electronics,Canteen,Found,5
 IDCard,Documents,Office,Lost,2
-IDCard,Documents,Office,Found,2
+IDCard,Documents,Office,Found,1
 
 

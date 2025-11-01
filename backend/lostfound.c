@@ -4,7 +4,7 @@
 #include "queue.h"
 #include "bst.h"
 #include "match.h"
-// Main 
+// Main C 
 #define INPUT_FILE "reports.txt"
 #define OUTPUT_FILE "matches.txt"
 

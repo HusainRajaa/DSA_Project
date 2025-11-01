@@ -1,4 +1,4 @@
-//used heap to prioritize by match score 
+//used heap to prioritize byy match score
 
 #ifndef MATCH_H
 #define MATCH_H

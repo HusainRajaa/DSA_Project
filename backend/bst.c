@@ -58,7 +58,7 @@ void saveToFile(Node* root, char filename[]) {
     saveToFile(root->right, filename);
 }
 
-// Free memory
+// Free memory to further use
 void freeBST(Node* root) {
     if (!root) return;
     freeBST(root->left);

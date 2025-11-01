@@ -1,4 +1,4 @@
-//used to store and search items 
+//used to store and search items -- BST
 
 
 
