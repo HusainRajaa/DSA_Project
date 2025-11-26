@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import styles from './ItemForm.module.css';
 
 // --- TYPE DEFINITIONS ---
@@ -141,7 +142,7 @@ export default function ItemForm({ formType }: ItemFormProps) {
                 >
                     <input type="file" id="image-upload" name="image" accept="image/*" onChange={handleImageChange} />
                     {imagePreview ? (
-                        <img src={imagePreview} alt="Image preview" className={styles.imagePreview} />
+                        <Image src={imagePreview} alt="Image preview" className={styles.imagePreview} width={100} height={100} />
                     ) : (
                         <div className={styles.uploadPrompt}>
                             <UploadIcon />

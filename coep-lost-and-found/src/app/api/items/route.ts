@@ -118,11 +118,11 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(newItem, { status: 201 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error creating item:', error);
     
     // Provide more specific error messages
-    if (error.code === 'P1001') {
+    if (typeof error === 'object' && error !== null && 'code' in error && (error as { code: unknown }).code === 'P1001') {
       return NextResponse.json(
         { error: 'Database connection timeout. Please try again.' },
         { status: 503 }

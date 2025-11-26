@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
@@ -17,7 +18,7 @@ interface FoundItem {
 }
 
 // ItemCard Component
-const ItemCard: React.FC<{ item: FoundItem; index: number }> = ({ item, index }) => {
+const ItemCard: React.FC<{ item: FoundItem; index: number; onDelete: (id: string) => void }> = ({ item, index, onDelete }) => {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -30,9 +31,28 @@ const ItemCard: React.FC<{ item: FoundItem; index: number }> = ({ item, index })
     return item.imageUrl || 'https://placehold.co/600x400/10b981/FFFFFF?text=No+Image';
   };
 
+  const handleMarkAsFound = async () => {
+    if (confirm('Are you sure you want to mark this item as found? This will remove it from the list.')) {
+      try {
+        const response = await fetch(`/api/found-items?id=${item.id}`, {
+          method: 'DELETE',
+        });
+        
+        if (response.ok) {
+          onDelete(item.id);
+        } else {
+          alert('Failed to mark item as found. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error deleting item:', error);
+        alert('Error marking item as found. Please try again.');
+      }
+    }
+  };
+
   return (
     <div className="item-card" style={{ transitionDelay: `${index * 100}ms` }}>
-      <img src={getImageUrl()} alt={item.title} className="item-card-img" onError={(e) => ((e.target as HTMLImageElement).src = 'https://placehold.co/600x400/31343c/FFFFFF?text=Image+Not+Found')} />
+      <Image src={getImageUrl()} alt={item.title} className="item-card-img" width={600} height={400} />
       <div className="item-card-content">
         <div className="item-card-header">
           <h3 className="item-card-title">{item.title}</h3>
@@ -42,6 +62,12 @@ const ItemCard: React.FC<{ item: FoundItem; index: number }> = ({ item, index })
         <p><strong>Found At:</strong> {item.location}</p>
         <p><strong>Contact:</strong> {item.contact}</p>
         <p><strong>Date Found:</strong> {formatDate(item.createdAt)}</p>
+        <button 
+          className="mark-found-button"
+          onClick={handleMarkAsFound}
+        >
+          Mark as Found
+        </button>
       </div>
     </div>
   );
@@ -70,6 +96,10 @@ export default function FoundItemsPage() {
     fetchFoundItems();
   }, []);
 
+  const handleDeleteItem = (id: string) => {
+    setFoundItems(prevItems => prevItems.filter(item => item.id !== id));
+  };
+
   return (
     <div className="page-container">
       <Header />
@@ -87,7 +117,7 @@ export default function FoundItemsPage() {
           ) : (
             <div className="items-grid">
               {foundItems.map((item, index) => (
-                <ItemCard key={item.id} item={item} index={index} />
+                <ItemCard key={item.id} item={item} index={index} onDelete={handleDeleteItem} />
               ))}
             </div>
           )}
@@ -189,6 +219,27 @@ export default function FoundItemsPage() {
           margin: 0.5rem 0;
           color: #9ca3af;
           font-size: 0.875rem;
+        }
+
+        /* Mark as Found Button */
+        .mark-found-button {
+          background-color: #10b981;
+          color: white;
+          border: none;
+          border-radius: 0.5rem;
+          padding: 0.5rem 1rem;
+          font-size: 0.875rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: background-color 0.2s ease;
+          margin-top: 1rem;
+          width: 100%;
+        }
+        .mark-found-button:hover {
+          background-color: #059669;
+        }
+        .mark-found-button:active {
+          background-color: #047857;
         }
       `}</style>
     </div>

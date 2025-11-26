@@ -20,25 +20,32 @@ const ArrowRightIcon = () => (
 
 // --- TYPE DEFINITIONS ---
 interface Item {
-    id: number;
-    title: string;
-    location: string;
-    category: string;
-    imageUrl: string;
-    date: string;
+  id: string;
+  title: string;
+  description: string;
+  location: string;
+  category: string;
+  imageUrl: string | null;
+  type: 'LOST' | 'FOUND';
+  status: 'UNCLAIMED' | 'CLAIMED';
+  createdAt: string;
+  author: {
+    name: string | null;
+    email: string | null;
+  };
 }
 
 // --- MOCK DATA ---
 const mockFoundItems: Item[] = [
-    { id: 1, title: 'Bose QuietComfort Headphones', location: 'Library, 2nd Floor', category: 'Electronics', imageUrl: `https://placehold.co/600x400/1e293b/FFFFFF?text=Bose+Headphones`, date: 'Oct 17, 2025' },
-    { id: 2, title: 'Student ID Card', location: 'Main Canteen', category: 'ID Card', imageUrl: `https://placehold.co/600x400/1e293b/FFFFFF?text=ID+Card`, date: 'Oct 16, 2025' },
-    { id: 3, title: 'Black Nike Water Bottle', location: 'Boat Club Lawns', category: 'Accessories', imageUrl: `https://placehold.co/600x400/1e293b/FFFFFF?text=Water+Bottle`, date: 'Oct 15, 2025' },
+    { id: '1', title: 'Bose QuietComfort Headphones', description: 'Black headphones in a black case.', location: 'Library, 2nd Floor', category: 'Electronics', imageUrl: `https://placehold.co/600x400/1e293b/FFFFFF?text=Bose+Headphones`, type: 'FOUND', status: 'UNCLAIMED', createdAt: '2025-10-17T10:00:00Z', author: { name: 'Admin', email: 'admin@coep.ac.in' } },
+    { id: '2', title: 'Student ID Card', description: 'ID card for student Jane Doe.', location: 'Main Canteen', category: 'ID Card', imageUrl: `https://placehold.co/600x400/1e293b/FFFFFF?text=ID+Card`, type: 'FOUND', status: 'UNCLAIMED', createdAt: '2025-10-16T12:30:00Z', author: { name: 'Admin', email: 'admin@coep.ac.in' } },
+    { id: '3', title: 'Black Nike Water Bottle', description: 'Standard black Nike water bottle.', location: 'Boat Club Lawns', category: 'Accessories', imageUrl: `https://placehold.co/600x400/1e293b/FFFFFF?text=Water+Bottle`, type: 'FOUND', status: 'UNCLAIMED', createdAt: '2025-10-15T15:00:00Z', author: { name: 'Admin', email: 'admin@coep.ac.in' } },
 ];
 
 const mockLostItems: Item[] = [
-    { id: 4, title: 'iPhone 14 Pro', location: 'Near Main Auditorium', category: 'Electronics', imageUrl: `https://placehold.co/600x400/8b5cf6/FFFFFF?text=iPhone+14`, date: 'Oct 18, 2025' },
-    { id: 5, title: 'Gray Jansport Backpack', location: 'Central Computer Lab', category: 'Bags', imageUrl: `https://placehold.co/600x400/8b5cf6/FFFFFF?text=Backpack`, date: 'Oct 17, 2025' },
-    { id: 6, title: 'Keys on a Red Lanyard', location: 'Parking Lot C', category: 'Keys', imageUrl: `https://placehold.co/600x400/8b5cf6/FFFFFF?text=Keys`, date: 'Oct 16, 2025' },
+    { id: '4', title: 'iPhone 14 Pro', description: 'Purple iPhone 14 Pro with a clear case.', location: 'Near Main Auditorium', category: 'Electronics', imageUrl: `https://placehold.co/600x400/8b5cf6/FFFFFF?text=iPhone+14`, type: 'LOST', status: 'UNCLAIMED', createdAt: '2025-10-18T09:00:00Z', author: { name: 'John Doe', email: 'john.doe@coep.ac.in' } },
+    { id: '5', title: 'Gray Jansport Backpack', description: 'Contains a laptop and textbooks.', location: 'Central Computer Lab', category: 'Bags', imageUrl: `https://placehold.co/600x400/8b5cf6/FFFFFF?text=Backpack`, type: 'LOST', status: 'UNCLAIMED', createdAt: '2025-10-17T14:00:00Z', author: { name: 'Jane Smith', email: 'jane.smith@coep.ac.in' } },
+    { id: '6', title: 'Keys on a Red Lanyard', description: 'Car key and two house keys.', location: 'Parking Lot C', category: 'Keys', imageUrl: `https://placehold.co/600x400/8b5cf6/FFFFFF?text=Keys`, type: 'LOST', status: 'UNCLAIMED', createdAt: '2025-10-16T18:00:00Z', author: { name: 'Peter Jones', email: 'peter.jones@coep.ac.in' } },
 ];
 
 // --- UTILITY HOOK for scroll animations ---
