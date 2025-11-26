@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 // --- ICONS (Scoped to this component) ---
 const UserIcon = () => (
@@ -44,12 +45,12 @@ export default function Header() {
         <>
             <header className={`header ${isScrolled ? 'headerScrolled' : ''}`}>
                 <div className="container headerNav">
-                    <a href="/" className="logo">COEP <span>Lost&Found</span></a>
+                    <Link href="/" className="logo">COEP <span>Lost&Found</span></Link>
                     
                     <nav className="desktopNav">
-                        <a href="/"><span>Home</span></a>
-                        <a href="/found-items"><span>Found Items</span></a>
-                        <a href="/lost-items"><span>Lost Items</span></a>
+                        <Link href="/"><span>Home</span></Link>
+                        <Link href="/found-items"><span>Found Items</span></Link>
+                        <Link href="/lost-items"><span>Lost Items</span></Link>
                     </nav>
                     
                     <div className="headerActions desktopNav">
@@ -63,9 +64,9 @@ export default function Header() {
                 
                 <div className={`mobileNavWrapper ${isMenuOpen ? 'open' : ''}`}>
                      <div className="mobileNav">
-                        <a href="/" onClick={handleLinkClick}>Home</a>
-                        <a href="/found-items" onClick={handleLinkClick}>Found Items</a>
-                        <a href="/lost-items" onClick={handleLinkClick}>Lost Items</a>
+                        <Link href="/" onClick={handleLinkClick}>Home</Link>
+                        <Link href="/found-items" onClick={handleLinkClick}>Found Items</Link>
+                        <Link href="/lost-items" onClick={handleLinkClick}>Lost Items</Link>
                         <button><UserIcon /><span>Login</span></button>
                     </div>
                 </div>
@@ -256,4 +257,3 @@ export default function Header() {
         </>
     );
 };
-

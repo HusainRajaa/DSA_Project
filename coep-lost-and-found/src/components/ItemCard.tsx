@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef } from 'react';
+import Image from 'next/image';
 import styles from './ItemCard.module.css'; // We'll create this CSS file too
 
 // --- SVG Icon ---
@@ -81,7 +82,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, index, isVisible, onContactOw
       onMouseLeave={handleMouseLeave}
     >
       <div className={styles.cardInner}>
-        <img src={getImageUrl()} alt={item.title} onError={(e) => ((e.target as HTMLImageElement).src = 'https://placehold.co/600x400/31343c/FFFFFF?text=Image+Not+Found')} />
+        <Image src={getImageUrl()} alt={item.title} width={600} height={400} />
         <div className={styles.itemCardContent}>
           <div className={styles.itemCardHeader}>
             <h3 className={styles.itemCardTitle}>{item.title}</h3>
