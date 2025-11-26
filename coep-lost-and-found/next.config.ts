@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self' https://placehold.co; img-src 'self' https://placehold.co data:;",
   },
 };
 

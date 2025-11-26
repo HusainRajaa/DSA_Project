@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
@@ -52,7 +51,9 @@ const ItemCard: React.FC<{ item: FoundItem; index: number; onDelete: (id: string
 
   return (
     <div className="item-card" style={{ transitionDelay: `${index * 100}ms` }}>
-      <Image src={getImageUrl()} alt={item.title} className="item-card-img" width={600} height={400} />
+      <div className="image-container">
+        <img src={getImageUrl()} alt={item.title} />
+      </div>
       <div className="item-card-content">
         <div className="item-card-header">
           <h3 className="item-card-title">{item.title}</h3>
@@ -183,9 +184,16 @@ export default function FoundItemsPage() {
           transform: translateY(-5px);
           box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
-        .item-card-img {
+        .image-container {
           width: 100%;
           height: 200px;
+          position: relative;
+          overflow: hidden;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .image-container img {
+          width: 100%;
+          height: 100%;
           object-fit: cover;
         }
         .item-card-content {

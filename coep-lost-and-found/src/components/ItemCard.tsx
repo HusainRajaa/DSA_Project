@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useRef } from 'react';
-import Image from 'next/image';
 import styles from './ItemCard.module.css'; // We'll create this CSS file too
 
 // --- SVG Icon ---
@@ -83,7 +82,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, index, isVisible, onContactOw
     >
       <div className={styles.cardInner}>
         <div className={styles.imageContainer}>
-          <Image src={getImageUrl()} alt={item.title} width={600} height={400} />
+          <img src={getImageUrl()} alt={item.title} />
         </div>
         <div className={styles.itemCardContent}>
           <div className={styles.itemCardHeader}>
