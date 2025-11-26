@@ -15,18 +15,16 @@ export async function POST(request: Request) {
       );
     }
 
-    // Find the item and its owner
-    const item = await prisma.item.findUnique({
+    // Find the item in either lostItem or foundItem collections
+    let item = await prisma.lostItem.findUnique({
       where: { id: itemId },
-      include: {
-        author: {
-          select: {
-            email: true,
-            name: true
-          }
-        }
-      }
     });
+
+    if (!item) {
+      item = await prisma.foundItem.findUnique({
+        where: { id: itemId },
+      });
+    }
 
     if (!item) {
       return NextResponse.json(
@@ -44,8 +42,7 @@ export async function POST(request: Request) {
     const contactRequest = {
       itemId,
       itemTitle: item.title,
-      ownerEmail: item.author.email,
-      ownerName: item.author.name,
+      ownerEmail: item.contact, // Using the 'contact' field
       contactEmail,
       contactName: contactName || 'Anonymous',
       message,
@@ -59,8 +56,7 @@ export async function POST(request: Request) {
       success: true,
       message: 'Contact request sent successfully',
       data: {
-        ownerEmail: item.author.email,
-        ownerName: item.author.name,
+        ownerEmail: item.contact, // Using the 'contact' field
         itemTitle: item.title
       }
     }, { status: 200 });

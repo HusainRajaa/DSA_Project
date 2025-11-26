@@ -13,7 +13,7 @@ export default function ReportLostPage() {
                     <div className={styles.titleWrapper}>
                         <h1 className={styles.title}>Report a Lost Item</h1>
                         <p className={styles.subtitle}>
-                            Don't worry, we'll help you find it. Fill out the details below to create a lost item report.
+                            Don&#39;t worry, we&#39;ll help you find it. Fill out the details below to create a lost item report.
                         </p>
                     </div>
                     <ItemForm formType="Lost" />

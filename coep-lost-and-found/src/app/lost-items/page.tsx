@@ -107,7 +107,7 @@ export default function LostItemsPage() {
         <div className="container">
           <h1 className="page-title">All Lost Items</h1>
           <p className="page-subtitle">
-            Review items reported missing by students. If you think you've found one of these items, please contact the owner.
+            Review items reported missing by students. If you think you&#39;ve found one of these items, please contact the owner.
           </p>
           
           {loading ? (

@@ -1,56 +1,21 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-// Create a dummy user for testing if it doesn't exist
-async function ensureDummyUser() {
-  try {
-    const dummyUser = await prisma.user.findFirst({
-      where: { email: 'dummy@example.com' }
-    });
-
-    if (!dummyUser) {
-      return await prisma.user.create({
-        data: {
-          name: 'Dummy User',
-          email: 'dummy@example.com',
-          role: 'USER'
-        }
-      });
-    }
-
-    return dummyUser;
-  } catch (error) {
-    console.error('Error in ensureDummyUser:', error);
-    throw error;
-  }
-}
-
-// Helper function to test database connection
-async function testConnection() {
-  try {
-    await prisma.$queryRaw`SELECT 1`;
-    return true;
-  } catch (error) {
-    console.error('Database connection test failed:', error);
-    return false;
-  }
-}
-
 export async function GET() {
   try {
-    const items = await prisma.item.findMany({
-      include: {
-        author: {
-          select: {
-            name: true,
-            email: true
-          }
-        }
-      },
+    const lostItems = await prisma.lostItem.findMany({
       orderBy: {
         createdAt: 'desc'
       }
     });
+    const foundItems = await prisma.foundItem.findMany({
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    const items = [...lostItems.map(item => ({ ...item, type: 'lost' })), ...foundItems.map(item => ({ ...item, type: 'found' }))];
+    items.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     return NextResponse.json(items);
   } catch (error) {
@@ -67,67 +32,40 @@ export async function POST(request: Request) {
     const body = await request.json();
     
     // Validate required fields
-    const { title, description, category, location, type, imageUrl } = body;
+    const { title, description, category, location, contact, type, imageUrl } = body;
     
-    if (!title || !description || !category || !location || !type) {
+    if (!title || !description || !category || !location || !contact || !type) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       );
     }
 
-    // Test connection first with retry logic
-    let connectionTest = await testConnection();
-    if (!connectionTest) {
-      // If connection fails, wait and retry once
-      console.log('Database connection failed, retrying in 2 seconds...');
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      connectionTest = await testConnection();
-      
-      if (!connectionTest) {
-        return NextResponse.json(
-          { error: 'Database connection unavailable. Please try again in a moment.' },
-          { status: 503 }
-        );
-      }
+    const itemData = {
+      title,
+      description,
+      category,
+      location,
+      contact,
+      imageUrl: imageUrl || null,
+    };
+
+    let newItem;
+    if (type === 'lost') {
+      newItem = await prisma.lostItem.create({
+        data: itemData,
+      });
+    } else if (type === 'found') {
+      newItem = await prisma.foundItem.create({
+        data: itemData,
+      });
+    } else {
+      return NextResponse.json({ error: 'Invalid item type' }, { status: 400 });
     }
-
-    // Ensure we have a user to associate with the item
-    const dummyUser = await ensureDummyUser();
-
-    const newItem = await prisma.item.create({
-      data: {
-        title,
-        description,
-        category,
-        location,
-        type,
-        imageUrl: imageUrl || null,
-        authorId: dummyUser.id,
-        status: 'UNCLAIMED',
-        isApproved: false
-      },
-      include: {
-        author: {
-          select: {
-            name: true,
-            email: true
-          }
-        }
-      }
-    });
 
     return NextResponse.json(newItem, { status: 201 });
   } catch (error: unknown) {
     console.error('Error creating item:', error);
-    
-    // Provide more specific error messages
-    if (typeof error === 'object' && error !== null && 'code' in error && (error as { code: unknown }).code === 'P1001') {
-      return NextResponse.json(
-        { error: 'Database connection timeout. Please try again.' },
-        { status: 503 }
-      );
-    }
     
     return NextResponse.json(
       { error: 'Failed to create item. Please try again.' },

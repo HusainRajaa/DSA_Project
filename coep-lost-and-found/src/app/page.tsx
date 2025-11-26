@@ -145,7 +145,7 @@ export default function HomePage() {
           <div className={`${styles.container} ${styles.heroContent}`}>
             <AnimatedSection>
               <h1 className={styles.heroTitle}>Lost Something? <br /> <span>Find It With Ease.</span></h1>
-              <p className={styles.heroSubtitle}>The official Lost & Found hub for the COEP campus. Report lost items, post what you've found, and help reunite belongings with their owners.</p>
+              <p className={styles.heroSubtitle}>The official Lost & Found hub for the COEP campus. Report lost items, post what you&#39;ve found, and help reunite belongings with their owners.</p>
               
               <SearchBar onSearch={setSearchQuery} />
 
@@ -205,7 +205,7 @@ export default function HomePage() {
            <div className={styles.container}>
                 <AnimatedSection className={styles.textCenter}>
                     <h2 className={styles.sectionTitle}>Powered by Smart Data Structures</h2>
-                    <p className={styles.sectionSubtitle}>This isn't just a website; it's a smart system designed for efficiency and speed.</p>
+                    <p className={styles.sectionSubtitle}>This isn&#39;t just a website; it&#39;s a smart system designed for efficiency and speed.</p>
                 </AnimatedSection>
                 <div className={styles.dsaGrid}>
                     <DsaCard icon={"🚀"} title="Trie" description="For lightning-fast, predictive search suggestions as you type." delay={0} />
