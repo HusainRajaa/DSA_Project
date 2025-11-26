@@ -1,48 +1,28 @@
-const { MongoClient } = require('mongodb');
+// This script runs automatically when MongoDB container starts
+// It creates the application user and collections
 
-async function initializeDatabase() {
-  const uri = process.env.MONGODB_URI;
-  
-  if (!uri) {
-    console.error('MONGODB_URI environment variable is not set');
-    process.exit(1);
-  }
+db = db.getSiblingDB('coep-lost-found');
 
-  const client = new MongoClient(uri);
-
-  try {
-    await client.connect();
-    console.log('✅ Connected to MongoDB Atlas successfully');
-
-    const db = client.db();
-    
-    // Create collections if they don't exist
-    const collections = ['foundItems', 'lostItems'];
-    
-    for (const collectionName of collections) {
-      const collectionExists = await db.listCollections({ name: collectionName }).hasNext();
-      
-      if (!collectionExists) {
-        await db.createCollection(collectionName);
-        console.log(`✅ Created collection: ${collectionName}`);
-        
-        // Create index for createdAt field
-        await db.collection(collectionName).createIndex({ createdAt: -1 });
-        console.log(`✅ Created index on ${collectionName}.createdAt`);
-      } else {
-        console.log(`ℹ️ Collection already exists: ${collectionName}`);
-      }
+// Create application user with read/write permissions
+db.createUser({
+  user: 'app_user',
+  pwd: 'app_password123',
+  roles: [
+    {
+      role: 'readWrite',
+      db: 'coep-lost-found'
     }
+  ]
+});
 
-    console.log('\n🎉 Database initialization completed successfully!');
-    console.log('Collections ready: foundItems, lostItems');
-    
-  } catch (error) {
-    console.error('❌ Error initializing database:', error);
-    process.exit(1);
-  } finally {
-    await client.close();
-  }
-}
+// Create collections
+db.createCollection('foundItems');
+db.createCollection('lostItems');
 
-initializeDatabase();
+// Create indexes
+db.foundItems.createIndex({ createdAt: -1 });
+db.lostItems.createIndex({ createdAt: -1 });
+
+print('✅ MongoDB initialization completed successfully!');
+print('✅ Created collections: foundItems, lostItems');
+print('✅ Created user: app_user');

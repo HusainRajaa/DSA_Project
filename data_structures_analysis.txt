@@ -1,0 +1,151 @@
+# Data Structures Used in COEP Lost and Found Project
+
+## 1. Arrays - Used extensively throughout the application
+
+### Where and Why:
+- **Frontend State Management**: foundItems and lostItems arrays in React state
+  - Purpose: Store and manage collections of items for display
+  - Operations: map(), filter(), adding/removing elements
+
+- **API Responses**: Arrays returned from MongoDB queries
+  - Purpose: Efficiently handle multiple records from database
+
+- **Grid Layout**: CSS Grid for displaying items
+  - Purpose: Responsive layout for variable number of items
+
+## 2. Objects/Key-Value Pairs - Core data modeling structure
+
+### Where and Why:
+- **Item Data Structure** (TypeScript Interfaces):
+  interface FoundItem {
+    id: string;
+    title: string;
+    description: string;
+    category: string;
+    location: string;
+    contact: string;
+    imageUrl: string | null;
+    createdAt: string;
+  }
+  - Purpose: Structured data representation with typed properties
+  - Operations: Property access, serialization/deserialization
+
+- **MongoDB Documents**:
+  {
+    _id: ObjectId,
+    title: "Water Bottle",
+    description: "Blue Hydro Flask...",
+    category: "Accessories",
+    location: "Main Cafeteria",
+    contact: "+91 9876543210",
+    imageUrl: null,
+    createdAt: ISODate("2025-11-03T05:48:22.164Z")
+  }
+  - Purpose: Document-based storage with flexible schema
+  - Operations: CRUD operations, indexing
+
+## 3. Linked Lists (Conceptual) - React's Virtual DOM
+
+### Where and Why:
+- **React Component Tree**: Component hierarchy forms a tree structure
+  <FoundItemsPage>
+    <Header />
+    <main>
+      <ItemCard key={item.id} item={item} index={index} />
+      <ItemCard key={item.id} item={item} index={index} />
+      ...
+    </main>
+    <Footer />
+  </FoundItemsPage>
+  - Purpose: Efficient UI updates through diffing algorithm
+  - Operations: Reconciliation, component lifecycle
+
+## 4. Hash Tables/Maps - Used implicitly
+
+### Where and Why:
+- **React Keys**: Using item.id as keys for efficient rendering
+  {foundItems.map((item, index) => (
+    <ItemCard key={item.id} item={item} index={index} />
+  ))}
+  - Purpose: O(1) lookup for efficient DOM updates
+
+- **URL Search Parameters**: Query string parsing
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get('id');
+  - Purpose: Key-value parameter extraction from URLs
+
+## 5. Stacks - Function call stack and React hooks
+
+### Where and Why:
+- **React Hooks**: useState, useEffect use call stack
+  const [foundItems, setFoundItems] = useState<FoundItem[]>([]);
+  useEffect(() => { /* side effects */ }, []);
+  - Purpose: Manage component state and lifecycle
+
+## 6. Queues - Event handling and API requests
+
+### Where and Why:
+- **Event Loop**: Asynchronous operations (fetch, promises)
+  const response = await fetch('/api/found-items');
+  const data = await response.json();
+  - Purpose: Non-blocking I/O operations
+
+## 7. Trees - File system and component hierarchy
+
+### Where and Why:
+- **Project Structure**: Directory tree organization
+  src/
+  ├── app/
+  │   ├── api/
+  │   │   ├── found-items/
+  │   │   └── lost-items/
+  │   ├── found-items/
+  │   └── lost-items/
+  └── components/
+  - Purpose: Organized codebase structure
+
+## 8. Graphs - Component dependencies
+
+### Where and Why:
+- **Module Dependencies**: Import/export relationships
+  import Header from '@/components/Header';
+  import Footer from '@/components/Footer';
+  - Purpose: Modular code organization and dependency management
+
+## Algorithms and Data Processing Patterns:
+
+### 1. Sorting Algorithm
+- Where: MongoDB queries with sort({ createdAt: -1 })
+- Purpose: Display newest items first
+- Complexity: O(n log n) for sorting
+
+### 2. Filtering Algorithm
+- Where: React state updates for deletion
+  setFoundItems(prevItems => prevItems.filter(item => item.id !== id));
+- Purpose: Remove deleted items from UI
+- Complexity: O(n) for filtering
+
+### 3. Mapping/Transformation
+- Where: Data transformation between MongoDB and frontend
+  const formattedItems = foundItems.map(item => ({
+    id: item._id.toString(),
+    ...item
+  }));
+- Purpose: Convert data formats
+- Complexity: O(n) for transformation
+
+### 4. Search Algorithm
+- Where: MongoDB find() operations
+- Purpose: Retrieve specific documents by ID
+- Complexity: O(1) with proper indexing
+
+## Why These Data Structures Were Chosen:
+
+1. Arrays: Perfect for ordered collections of similar items
+2. Objects: Ideal for structured data with multiple properties
+3. Linked Lists: React's efficient update mechanism
+4. Hash Tables: Fast lookups for keys and parameters
+5. Stacks/Queues: Natural fit for async operations and function calls
+6. Trees: Reflects hierarchical relationships in UI and file structure
+
+The combination of these data structures provides an efficient, scalable, and maintainable architecture for the lost and found application, balancing performance with development simplicity.
