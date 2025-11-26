@@ -26,11 +26,18 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-.itemCard img {
+.imageContainer {
     width: 100%;
     height: 200px;
-    object-fit: cover;
+    position: relative;
+    overflow: hidden;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.imageContainer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .itemCardContent {

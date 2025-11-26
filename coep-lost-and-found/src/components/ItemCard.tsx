@@ -82,7 +82,9 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, index, isVisible, onContactOw
       onMouseLeave={handleMouseLeave}
     >
       <div className={styles.cardInner}>
-        <Image src={getImageUrl()} alt={item.title} width={600} height={400} />
+        <div className={styles.imageContainer}>
+          <Image src={getImageUrl()} alt={item.title} width={600} height={400} />
+        </div>
         <div className={styles.itemCardContent}>
           <div className={styles.itemCardHeader}>
             <h3 className={styles.itemCardTitle}>{item.title}</h3>
