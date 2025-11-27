@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import SearchBar from '@/components/SearchBar';
 
 // --- TYPE DEFINITIONS ---
 interface FoundItem {
@@ -77,7 +78,9 @@ const ItemCard: React.FC<{ item: FoundItem; index: number; onDelete: (id: string
 // --- MAIN PAGE COMPONENT ---
 export default function FoundItemsPage() {
   const [foundItems, setFoundItems] = useState<FoundItem[]>([]);
+  const [filteredItems, setFilteredItems] = useState<FoundItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchFoundItems = async () => {
@@ -86,6 +89,7 @@ export default function FoundItemsPage() {
         if (response.ok) {
           const data = await response.json();
           setFoundItems(data);
+          setFilteredItems(data);
         }
       } catch (error) {
         console.error('Error fetching found items:', error);
@@ -97,8 +101,52 @@ export default function FoundItemsPage() {
     fetchFoundItems();
   }, []);
 
+  const handleSearch = async (query: string) => {
+    console.log('Search query:', query);
+    setSearchQuery(query);
+    
+    if (query.trim() === '') {
+      // If search is empty, show all items
+      console.log('Empty search, showing all items');
+      setFilteredItems(foundItems);
+    } else {
+      // Try server-side search first, fallback to client-side search
+      try {
+        const searchUrl = `/api/found-items?search=${encodeURIComponent(query)}`;
+        console.log('Search URL:', searchUrl);
+        const response = await fetch(searchUrl);
+        console.log('Response status:', response.status);
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Search results:', data);
+          setFilteredItems(data);
+        } else {
+          // Fallback to client-side search if server fails
+          console.log('Server search failed, using client-side search');
+          performClientSideSearch(query);
+        }
+      } catch (error) {
+        // Fallback to client-side search if there's an error
+        console.error('Error searching items, using client-side search:', error);
+        performClientSideSearch(query);
+      }
+    }
+  };
+
+  const performClientSideSearch = (query: string) => {
+    const lowerCaseQuery = query.toLowerCase().trim();
+    const filtered = foundItems.filter(item => 
+      item.title.toLowerCase().includes(lowerCaseQuery) ||
+      item.description.toLowerCase().includes(lowerCaseQuery) ||
+      item.category.toLowerCase().includes(lowerCaseQuery) ||
+      item.location.toLowerCase().includes(lowerCaseQuery)
+    );
+    setFilteredItems(filtered);
+  };
+
   const handleDeleteItem = (id: string) => {
     setFoundItems(prevItems => prevItems.filter(item => item.id !== id));
+    setFilteredItems(prevItems => prevItems.filter(item => item.id !== id));
   };
 
   return (
@@ -111,13 +159,20 @@ export default function FoundItemsPage() {
             Review items found by students. If you think one of these items belongs to you, please contact the finder.
           </p>
           
+          {/* Search Bar */}
+          {!loading && foundItems.length > 0 && (
+            <SearchBar onSearch={handleSearch} />
+          )}
+          
           {loading ? (
             <div className="loading">Loading found items...</div>
-          ) : foundItems.length === 0 ? (
-            <div className="no-items">No found items reported yet.</div>
+          ) : filteredItems.length === 0 ? (
+            <div className="no-items">
+              {searchQuery ? `No found items found matching "${searchQuery}"` : 'No found items reported yet.'}
+            </div>
           ) : (
             <div className="items-grid">
-              {foundItems.map((item, index) => (
+              {filteredItems.map((item, index) => (
                 <ItemCard key={item.id} item={item} index={index} onDelete={handleDeleteItem} />
               ))}
             </div>

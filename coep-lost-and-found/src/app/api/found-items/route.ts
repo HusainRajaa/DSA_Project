@@ -2,11 +2,27 @@ import { NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const searchQuery = searchParams.get('search');
+    
     const client = await clientPromise;
     const db = client.db();
-    const foundItems = await db.collection('foundItems').find({}).sort({ createdAt: -1 }).toArray();
+    
+    let query = {};
+    if (searchQuery) {
+      query = {
+        $or: [
+          { title: { $regex: searchQuery, $options: 'i' } },
+          { description: { $regex: searchQuery, $options: 'i' } },
+          { category: { $regex: searchQuery, $options: 'i' } },
+          { location: { $regex: searchQuery, $options: 'i' } }
+        ]
+      };
+    }
+    
+    const foundItems = await db.collection('foundItems').find(query).sort({ createdAt: -1 }).toArray();
     
     // Convert MongoDB _id to id for frontend compatibility
     const formattedItems = foundItems.map(item => ({
